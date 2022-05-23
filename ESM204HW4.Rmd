@@ -1,0 +1,59 @@
+---
+title: "ESM 204 HW4"
+author: "Tommy King"
+date: "5/23/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE, message = FALSE, warning= FALSE}
+knitr::opts_chunk$set(echo = FALSE, message= FALSE, warning = FALSE)
+
+# loading packages 
+library(tidyverse)
+library(here)
+library(dplyr)
+library(janitor)
+
+# The first, “damages.csv” provides new model estimates of the annual total damages from climate change at different levels of warming (in degrees C). The second dataset, “warming.csv” contains estimates of a baseline future climate trajectory (in degrees C) until 2100, and a second trajectory that adds a one-time pulse of CO2 today to the atmosphere. The pulse is 35 billion tons of carbon, which is roughly equal to annual global emissions. You can think of this as a “small” one-time pulse in carbon emissions.
+
+# reading in the data and mutating it to show values in billions of dollars
+
+damages_subset <- read_csv(here("damages.csv")) %>% 
+  clean_names() %>% 
+  mutate(damages = damages/1000000000)
+
+warming_subset <- read_csv(here("warming (1).csv")) %>% 
+  clean_names()
+
+```
+
+### Question 1: Damage Equation
+```{r}
+#Using damages.csv, estimate a quadratic damage function relating the dollar value of damages to the change in global mean temperature. Estimate a model with a zero intercept because damages by construction must equal zero when there is no climate change. Plot your estimated damage function, overlaid with a scatterplot of the underlying data.
+
+#
+
+
+#Squaring the warming variables. 
+warming_new <- damages_subset$warming^2
+
+# defining the damages quadratic function
+damage_function <- lm(damages ~ 0 + warming + warming_new, data = damages_subset)
+
+warming <- damages_subset$warming
+damages_2 <- predict(damage_function)
+
+```
+
+#### ** Figure 1: Damages Resulting from Climate Change**
+```{r}
+#graphing the function
+ggplot(data = damages_subset, aes(x = warming, y = damages)) + 
+  geom_point(color = "blue") + 
+  geom_smooth(aes(x = warming, y = damages_2, color = "red")) + 
+  labs(x = "Warming (Degrees Celsius)", y = 
+         "Damages ($ billions)")
+```
+
+### Question 2: 
+
