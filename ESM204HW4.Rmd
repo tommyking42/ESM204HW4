@@ -149,5 +149,43 @@ ggplot(data = discount_table) +
 
 ***Figure 4: Artificially increasing the discount rate lowers the SCC exponentially. Thus, the proposed rates by the Obama Administration and NY state lead to SCC values between $50 and 100.***
 
-#### Question 4: 
+### Question 4: Ramsey Rule 
+### Figure 5: Ramsey Rule SCC evaluation
+```{r}
+# The National Academies of Sciences, Engineering, and Medicine advised the government in a 2017 report to use the Ramsey Rule when discounting within the SCC calculation:
+ #r = ρ + ηg
+#Using ρ = 0.001, η = 2, and g = 0.01, what is the SCC? Locate this point on your graph from above.
+
+# define values 
+
+p <- 0.001
+n <- 2
+g <- 0.01
+
+# plug into equation 
+
+ramsey_rule <- (p+n*g)*100
+
+# plug into previous damages equation from above 
+ramsey_discount <- sum(discount_damages(ramsey_rule, damages$damages_difference_tons, damages$year,  2022))
+
+# Scc is about $71.35 in Ramsey Rule
+
+#Now plot that value 
+
+ggplot(data = discount_table) + 
+  geom_point(aes(x = rates, y = SCC), color = "darkblue") + 
+  geom_point(x = ramsey_rule, y = ramsey_discount, color = "red", size = 4) + 
+  geom_vline(xintercept= 2.1, color = "darkblue", linetype = "dashed") + 
+  geom_label(aes(x = 6.5, label = "SCC under Ramsey Rule = $71.35", y = 72), color = "darkblue", angle = 90) + 
+  labs(x = "Discount Rates(%)", y = "Social Cost of Carbon ($/ton)")
+
+```
+
+NPV of future damages between current day and 2100 discounted at various levels with different discount rates (0-10% in increments of 0.5%). The red point shows the discount rate and accompanying SCC under the Ramsey Rule. 
+
+The SCC at the proposed discount rate under Ramsey Rule is $`r round (ramsey_discount,2)`/ton. 
+
+### Question 5: Policy Considerations
+
 
