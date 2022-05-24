@@ -107,6 +107,47 @@ tons_graph <- ggplot(data = damages,
 tons_graph
 
 ```
+
 **Figure 3 Analysis: Difference in damages rate over time moderately decreases, however, the overall damages increases exponentially from current day to 2100.**
 
+
+### Question 3: SCC Analysis
+```{r}
+# The SCC is the present discounted value of the stream of future damages caused by one additional ton of CO2. The Obama Administration used a discount rate of 3% to discount damages. Recently, New York State used a discount rate of 2%. 
+
+#Calculate and make a plot of the SCC (y-axis) against the discount rate (x-axis) for a reasonable range of discount rates. Explain the intuition for how the discount rate affects the SCC.
+
+# Creating graph using a range of discount rates to see how the different rates affect the SCC values on the y-axis 
+
+# First, must find total damages to 2100 from one ton of CO2 by adding together all of damages_difference_tons
+
+total_damages_one_ton <- sum(damages$damages_difference_tons)
+
+# now must create a function of NPV use disount rate, damages, time, and present time
+
+discount_damages <- function(rate, damage, time, present_time){
+  NPV <- damage/ (1 + (rate/100))^ (time- present_time) 
+  return(NPV)
+}
+
+# now create a new data frame for different discount rates 
+
+discount_table <- data_frame(rates = seq(0,10,0.5), SCC = seq(0,10,0.5))
+
+# now use a for loop to find discounted damages up to 2100 for discount rates from 0 to 10 and sum to find total damages per discount rate
+
+for(x in 1:length(discount_table$rates)){
+  discount_table$SCC[x] <- sum(discount_damages(discount_table$rates[x], damages$damages_difference_tons, damages$year, 2022))
+}
+
+# now we plot the for loop for discount to visualize this process 
+
+ggplot(data = discount_table) + 
+  geom_point(aes(x = rates, y = SCC), color = "darkblue") + 
+  labs(x = "Discount Rates (%)", y = "Social Cost of Carbon (SCC) ($/ton)")
+```
+
+***Figure 4: Artificially increasing the discount rate lowers the SCC exponentially. Thus, the proposed rates by the Obama Administration and NY state lead to SCC values between $50 and 100.***
+
+#### Question 4: 
 
