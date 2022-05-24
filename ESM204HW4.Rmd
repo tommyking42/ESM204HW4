@@ -56,4 +56,21 @@ ggplot(data = damages_subset, aes(x = warming, y = damages)) +
 ```
 
 ### Question 2: 
+```{r}
+# Use warming.csv and your estimated damage function to predict damages in each year under the baseline climate and the pulse scenario. Make four plots: (1) damages over time without the pulse, (2) damages over time with the pulse, (3) the difference in damages over time that arises from the pulse, and (4) the difference in damages over time from the pulse per ton of CO2 (you can assume that each ton of the pulse causes the same amount of damage).
+
+# define the pulse 
+pulse_tons <- 35 
+
+# creating new variables for damages that reflect the warming variables from the warming subset
+
+damages <- warming_subset %>% 
+  mutate(damages_baseline = damage_function(warming_baseline)) %>% 
+  mutate(damages_pulse = damage_function(warming_pulse)) %>% 
+  mutate(damages_difference = damages_pulse - damages_baseline) %>% 
+  mutate(damages_difference_tons = damages_difference/pulse_tons)
+
+```
+
+
 
