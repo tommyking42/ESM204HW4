@@ -27,7 +27,7 @@ warming_subset <- read_csv(here("warming (1).csv")) %>%
 
 ```
 
-### Question 1: Damage Equation
+### **Question 1: Damage Equation**
 ```{r}
 #Using damages.csv, estimate a quadratic damage function relating the dollar value of damages to the change in global mean temperature. Estimate a model with a zero intercept because damages by construction must equal zero when there is no climate change. Plot your estimated damage function, overlaid with a scatterplot of the underlying data.
 
@@ -59,7 +59,7 @@ ggplot(data = damages_subset, aes(x = warming, y = damages)) +
          "Damages ($ billions)")
 ```
 
-### Question 2: 
+### **Question 2: Predicted Damages**
 ```{r}
 # Use warming.csv and your estimated damage function to predict damages in each year under the baseline climate and the pulse scenario. Make four plots: (1) damages over time without the pulse, (2) damages over time with the pulse, (3) the difference in damages over time that arises from the pulse, and (4) the difference in damages over time from the pulse per ton of CO2 (you can assume that each ton of the pulse causes the same amount of damage).
 
@@ -86,7 +86,7 @@ ggplot(data = damages, aes(x=year)) +
 
 *Visualization Analysis: Difference between pulse and no pulse scenario appears to be trivial.* 
 
-#### Figure 3: Absolute vs. Per Ton Damages Oer Time 
+#### Figure 3: Absolute vs. Per Ton Damages Over Time 
 ```{r}
 # creating graph showing the diffrences between absolute and per ton damages over time between the two scenarios. Facet wrapping two plots to show these differences.
 
@@ -111,7 +111,7 @@ tons_graph
 **Figure 3 Analysis: Difference in damages rate over time moderately decreases, however, the overall damages increases exponentially from current day to 2100.**
 
 
-### Question 3: SCC Analysis
+### **Question 3: SCC Analysis**
 ```{r}
 # The SCC is the present discounted value of the stream of future damages caused by one additional ton of CO2. The Obama Administration used a discount rate of 3% to discount damages. Recently, New York State used a discount rate of 2%. 
 
@@ -149,7 +149,7 @@ ggplot(data = discount_table) +
 
 ***Figure 4: Artificially increasing the discount rate lowers the SCC exponentially. Thus, the proposed rates by the Obama Administration and NY state lead to SCC values between $50 and 100.***
 
-### Question 4: Ramsey Rule 
+### **Question 4: Ramsey Rule** 
 ### Figure 5: Ramsey Rule SCC evaluation
 ```{r}
 # The National Academies of Sciences, Engineering, and Medicine advised the government in a 2017 report to use the Ramsey Rule when discounting within the SCC calculation:
@@ -186,6 +186,78 @@ NPV of future damages between current day and 2100 discounted at various levels 
 
 The SCC at the proposed discount rate under Ramsey Rule is $`r round (ramsey_discount,2)`/ton. 
 
-### Question 5: Policy Considerations
+### **Question 5: Comparing Policy Considerations**
 
+Question 5 asks to consider business as usual policy (Policy A) compared to strong action against climate change (Policy B) in which: 
+
+***Policy A:*** Either warming will occur as in the “baseline” (i.e. “no-pulse”) dataset above (this happens with probability 0.5) or warming each year will be 1.5 times that in the “baseline” dataset (with probability 0.5).
+
+***Policy B:*** Warming will continue until 2050 as in the “baseline” dataset, and then will stabilize at 1.29 degrees and stay that way forever.
+```{r}
+#5. Now suppose there are two possible climate policies that can be pursued. 
+
+
+#Policy A is business as usual and Policy B is to take immediate and strong action on climate change. 
+
+#Use these facts
+# • If you undertake Policy A there are two possible outcomes. Either warming will occur as in the “baseline” (i.e. “no-pulse”) dataset above (this happens with probability 0.5) or warming each year will be 1.5 times that in the “baseline” dataset (with probability 0.5).
+
+#• Under Policy B, warming will continue until 2050 as in the “baseline” dataset, and then will stabilize at 1.29 degrees and stay that way forever.
+
+#• Society is risk neutral
+#• Use a discount rate of 2%
+
+#What is the expected present value of damages up to 2100 under Policy A? What is the expected present value of damages up to 2100 under Policy B? Suppose undertaking Policy A costs zero and undertaking Policy B costs X. 
+
+# The total cost of a policy is the implementation cost plus expected damages. Make a plot of total cost of Policy A and total cost of Policy B against X. Suppose Congress wants to undertake the policy with the lower total cost. Use your graph to advise Congress.
+
+# Estimate PV for the Policy A scenario, discount rate is 2% 
+
+discount_policy_a <- 2
+
+# create a new dataset with the damages and PV for both baseline and 1.5x warming 
+
+damages_a <- damages %>% 
+  select(year, warming_baseline, damages_baseline) %>% 
+  mutate(damages_1.5 = damage_function(1.5*warming_baseline)) %>% 
+  mutate(pv_baseline = discount_damages(discount_policy_a, damages_baseline, damages$year, 2022)) %>% 
+  mutate(pv_1.5 = discount_damages(discount_policy_a, damages_1.5, damages$year, 2022))
+
+# now calculating probabilities for both 1.5 and base 
+
+probability_base <- 0.5 
+probability_1.5 <- 0.5 
+
+# now summing PV for each 
+
+sum_base <- sum(damages_a$pv_baseline)
+sum_1.5 <- sum(damages_a$pv_1.5)
+
+# now scale by each probability 
+ev_a <- (sum_base * probability_base) + (sum_1.5 * probability_1.5)
+
+
+# Now moving to policy B, same process
+
+damages_b <- damages %>% 
+  select(year, warming_baseline) 
+
+for(i in 30:79){ 
+  damages_b$warming_baseline[i]=1.29
+}
+
+# now warming is locked at 1.29 after 2050
+
+damages_b <- damages_b %>%  
+  mutate(damages_b = damage_function(warming_baseline)) %>% 
+  mutate(pv_b = discount_damages(discount_policy_a, damages_b, damages$year, 2022))
+
+prob_b <- 1
+sum_b <- sum(damages_b$pv_b)
+ev_b <- (sum_b * prob_b)
+
+```
+
+- **Scenario A: PV of Damages under Policy A=** $`r round(ev_a, 0)` billion. 
+- **Scenario B: PV of Damages under Policy B=** $`r round(ev_b, 0)` billion. 
 
