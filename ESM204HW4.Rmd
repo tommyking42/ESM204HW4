@@ -6,6 +6,7 @@ output:
   html_document: 
     toc: yes
     number_sections: yes
+    theme: cerulean
    
 ---
 
@@ -58,10 +59,12 @@ damage_function <- function(x){
 #graphing the function
 ggplot(data = damages_subset, aes(x = warming, y = damages)) + 
   geom_point(color = "blue") + 
-  geom_smooth(aes(x = warming, y = damages_2, color = "red")) + 
+  geom_smooth(aes(x = warming, y = damages_2), color = "red") + 
   labs(x = "Warming (Degrees Celsius)", y = 
          "Damages ($ billions)")
 ```
+
+**Figure 1 Analysis:** Increasing temperatures will result in increased rates of damages, amounting to millions of billions of dollars over the next hundred years. 
 
 # **Question 2: Predicted Damages**
 ## *Figure 2: Damages over Time with and Without Pulse*
@@ -89,9 +92,9 @@ ggplot(data = damages, aes(x=year)) +
 ```
 
 
-*Visualization Analysis: Difference between pulse and no pulse scenario appears to be trivial.* 
+**Figure 2 Analysis:** Difference between pulse and no pulse scenario appears to be trivial, as denoted by orange and blue lines. 
 
-## *Figure 3: Absolute vs. Per Ton Damages Over Time*
+## *Figures 3a/b: Absolute vs. Per Ton Damages Over Time*
 ```{r}
 # creating graph showing the diffrences between absolute and per ton damages over time between the two scenarios. Facet wrapping two plots to show these differences.
 
