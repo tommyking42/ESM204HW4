@@ -38,10 +38,14 @@ warming_subset <- read_csv(here("warming (1).csv")) %>%
 warming_new <- damages_subset$warming^2
 
 # defining the damages quadratic function
-damage_function <- lm(damages ~ 0 + warming + warming_new, data = damages_subset)
+damages_function <- lm(damages ~ 0 + warming + warming_new, data = damages_subset)
 
 warming <- damages_subset$warming
-damages_2 <- predict(damage_function)
+damages_2 <- predict(damages_function)
+
+damage_function <- function(x){
+  damages_function$coefficients[1]*x+damages_function$coefficients[2]*x^2
+}
 
 ```
 
@@ -70,7 +74,20 @@ damages <- warming_subset %>%
   mutate(damages_difference = damages_pulse - damages_baseline) %>% 
   mutate(damages_difference_tons = damages_difference/pulse_tons)
 
+# creating graph number 1 for both scenarios and total damages
+
+ggplot(data = damages, aes(x=year)) + 
+  geom_smooth(aes(y= damages_baseline), color = "blue")+ 
+  geom_smooth(aes(y=damages_pulse), color = "orange") + 
+  labs(x = "Year", y = "Damages ($ billions)")
+
 ```
 
+*Visualization Analysis: Difference between pulse and no pulse scenario appears to be trivial.* 
+
+####
+```{r}
+
+```
 
 
