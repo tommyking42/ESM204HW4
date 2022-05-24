@@ -261,3 +261,48 @@ ev_b <- (sum_b * prob_b)
 - **Scenario A: PV of Damages under Policy A=** $`r round(ev_a, 0)` billion. 
 - **Scenario B: PV of Damages under Policy B=** $`r round(ev_b, 0)` billion. 
 
+#### Question 5 Plot 
+```{r}
+# Need to find total cost 
+# for a, expected PV of damages 
+
+total_cost_a <- function(x){ev_a}
+
+# b adds in the implementation cost (X)
+
+total_cost_b <- function(x){ev_b + x}
+
+# now find equal cost 
+x_equal <- ev_a - ev_b
+
+# now create a new df, including vector of possibile costs in billions based on calculated above difference 
+
+cost <- c(0,3e5,6e5,9e5,12e5,15e5,18e5,21e5,24e5,27e5,30e5)
+
+cost_df <- data.frame(cost) %>% 
+  mutate(total_cost_a = total_cost_a(cost)) %>% 
+  mutate(total_cost_b = total_cost_b(cost)) %>% 
+  pivot_longer(cols = c(total_cost_a, total_cost_b), 
+               names_to = "policy", values_to = "total_cost") %>% 
+  mutate(policy = case_when(policy == "total_cost_a" ~ "Policy A", policy == "total_cost_b" ~ "Policy B"))
+
+# now graph that bitch 
+
+ggplot(data = cost_df, aes(x= cost, y = total_cost)) + 
+  geom_line(aes(color = policy)) + 
+  geom_vline(xintercept = x_equal, color = "darkblue", linetype = "dashed") +
+  geom_label(aes(x = 2000000, 
+                 label = "$2,235,574 billion", 
+                 y = 2700000), color = "darkblue", angle = 90) + 
+  labs(x = "Implementation cost ($ billions", y = "Total cost ($ billions)")
+
+```
+
+**Question 5 Analysis:** Congress should adopt Policy B, so long as implementation costs are not greater than $ `r round(x_equal, 0)` billion. In the case that implementation costs are in fact greater than the above value, then they should adopt Policy B. 
+
+### **Question 6: Risk Averse Advice**
+
+Policy B is far better for society if society is more risk averse. This is because the costs of Policy B are known, whereas the costs of Policy A are unknown, making it far more risky. As such, Congress would select Policy B in most scenarios, as they can accurately understand the costs associated with Policy B. 
+
+In Policy A, there is a 50/50 chance that warming will follow the baseline under low costs or that warming will jump up 1.5x and increase costs immensely. So, society will be preferential to Policy B and that will likely be the choice that Congress takes for its people. 
+
