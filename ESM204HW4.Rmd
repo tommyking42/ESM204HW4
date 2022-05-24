@@ -1,8 +1,12 @@
 ---
 title: "ESM 204 HW4"
-author: "Tommy King"
+author: "Tommy King, Charlie Wilson, Sarah Lam"
 date: "5/23/2022"
-output: html_document
+output: 
+  html_document: 
+    toc: yes
+    number_sections: yes
+   
 ---
 
 ```{r setup, include=FALSE, message = FALSE, warning= FALSE}
@@ -27,7 +31,7 @@ warming_subset <- read_csv(here("warming (1).csv")) %>%
 
 ```
 
-### **Question 1: Damage Equation**
+# **Question 1: Damage Equation**
 ```{r}
 #Using damages.csv, estimate a quadratic damage function relating the dollar value of damages to the change in global mean temperature. Estimate a model with a zero intercept because damages by construction must equal zero when there is no climate change. Plot your estimated damage function, overlaid with a scatterplot of the underlying data.
 
@@ -49,7 +53,7 @@ damage_function <- function(x){
 
 ```
 
-#### **Figure 1: Damages Resulting from Climate Change**
+## *Figure 1: Damages Resulting from Climate Change*
 ```{r}
 #graphing the function
 ggplot(data = damages_subset, aes(x = warming, y = damages)) + 
@@ -59,7 +63,8 @@ ggplot(data = damages_subset, aes(x = warming, y = damages)) +
          "Damages ($ billions)")
 ```
 
-### **Question 2: Predicted Damages**
+# **Question 2: Predicted Damages**
+## *Figure 2: Damages over Time with and Without Pulse*
 ```{r}
 # Use warming.csv and your estimated damage function to predict damages in each year under the baseline climate and the pulse scenario. Make four plots: (1) damages over time without the pulse, (2) damages over time with the pulse, (3) the difference in damages over time that arises from the pulse, and (4) the difference in damages over time from the pulse per ton of CO2 (you can assume that each ton of the pulse causes the same amount of damage).
 
@@ -86,7 +91,7 @@ ggplot(data = damages, aes(x=year)) +
 
 *Visualization Analysis: Difference between pulse and no pulse scenario appears to be trivial.* 
 
-#### Figure 3: Absolute vs. Per Ton Damages Over Time 
+## *Figure 3: Absolute vs. Per Ton Damages Over Time*
 ```{r}
 # creating graph showing the diffrences between absolute and per ton damages over time between the two scenarios. Facet wrapping two plots to show these differences.
 
@@ -108,10 +113,11 @@ tons_graph
 
 ```
 
-**Figure 3 Analysis: Difference in damages rate over time moderately decreases, however, the overall damages increases exponentially from current day to 2100.**
+**Figure 3 Analysis:** Difference in damages rate over time moderately decreases, however, the overall damages increases exponentially from current day to 2100.
 
 
-### **Question 3: SCC Analysis**
+# **Question 3: SCC Analysis**
+## *Figure 4: SCC Analysis with Various Discount Rates*
 ```{r}
 # The SCC is the present discounted value of the stream of future damages caused by one additional ton of CO2. The Obama Administration used a discount rate of 3% to discount damages. Recently, New York State used a discount rate of 2%. 
 
@@ -147,10 +153,10 @@ ggplot(data = discount_table) +
   labs(x = "Discount Rates (%)", y = "Social Cost of Carbon (SCC) ($/ton)")
 ```
 
-***Figure 4: Artificially increasing the discount rate lowers the SCC exponentially. Thus, the proposed rates by the Obama Administration and NY state lead to SCC values between $50 and 100.***
+**Figure 4 Analysis**: Artificially increasing the discount rate lowers the SCC exponentially. Thus, the proposed rates by the Obama Administration and NY state lead to SCC values between $50 and 100.
 
-### **Question 4: Ramsey Rule** 
-### Figure 5: Ramsey Rule SCC evaluation
+# **Question 4: Ramsey Rule** 
+## *Figure 5: Ramsey Rule SCC evaluation*
 ```{r}
 # The National Academies of Sciences, Engineering, and Medicine advised the government in a 2017 report to use the Ramsey Rule when discounting within the SCC calculation:
  #r = ρ + ηg
@@ -182,11 +188,11 @@ ggplot(data = discount_table) +
 
 ```
 
-NPV of future damages between current day and 2100 discounted at various levels with different discount rates (0-10% in increments of 0.5%). The red point shows the discount rate and accompanying SCC under the Ramsey Rule. 
+**Figure 5 Analysis:** NPV of future damages between current day and 2100 discounted at various levels with different discount rates (0-10% in increments of 0.5%). The red point shows the discount rate and accompanying SCC under the Ramsey Rule. 
 
 The SCC at the proposed discount rate under Ramsey Rule is $`r round (ramsey_discount,2)`/ton. 
 
-### **Question 5: Comparing Policy Considerations**
+# **Question 5: Comparing Policy Considerations**
 
 Question 5 asks to consider business as usual policy (Policy A) compared to strong action against climate change (Policy B) in which: 
 
@@ -261,7 +267,7 @@ ev_b <- (sum_b * prob_b)
 - **Scenario A: PV of Damages under Policy A=** $`r round(ev_a, 0)` billion. 
 - **Scenario B: PV of Damages under Policy B=** $`r round(ev_b, 0)` billion. 
 
-#### Question 5 Plot 
+## *Figure 6: Policy A or B* 
 ```{r}
 # Need to find total cost 
 # for a, expected PV of damages 
@@ -300,7 +306,7 @@ ggplot(data = cost_df, aes(x= cost, y = total_cost)) +
 
 **Question 5 Analysis:** Congress should adopt Policy B, so long as implementation costs are not greater than $ `r round(x_equal, 0)` billion. In the case that implementation costs are in fact greater than the above value, then they should adopt Policy B. 
 
-### **Question 6: Risk Averse Advice**
+# **Question 6: Risk Averse Advice**
 
 Policy B is far better for society if society is more risk averse. This is because the costs of Policy B are known, whereas the costs of Policy A are unknown, making it far more risky. As such, Congress would select Policy B in most scenarios, as they can accurately understand the costs associated with Policy B. 
 
